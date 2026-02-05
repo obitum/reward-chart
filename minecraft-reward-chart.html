@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Reward Chart</title>
+    <style>
+        body {
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98D8C8 50%, #7CB342 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            max-width: 900px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2E7D32;
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+        
+        .block {
+            aspect-ratio: 1;
+            border: 3px solid #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: #8B4513;
+            color: white;
+            font-size: 0.7em;
+            position: relative;
+        }
+        
+        .block:hover {
+            transform: scale(1.1);
+        }
+        
+        .block.coal {
+            background: #424242;
+            border-color: #212121;
+            font-size: 0.6em;
+        }
+        
+        .block.iron {
+            background: #BDBDBD;
+            border-color: #757575;
+            font-size: 0.6em;
+        }
+        
+        .block.diamond {
+            background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
+            border-color: #006064;
+            font-size: 0.6em;
+        }
+        
+        .block.completed {
+            background: #4CAF50 !important;
+            border-color: #2E7D32 !important;
+        }
+        
+        .block-number {
+            font-size: 0.9em;
+            margin-top: 2px;
+        }
+        
+        .milestone-label {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: gold;
+            color: black;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.7em;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-box {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #333;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #E0E0E0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 3px solid #333;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .total-display {
+            text-align: center;
+            font-size: 2em;
+            color: #2E7D32;
+            margin: 10px 0;
+        }
+        
+        .reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 30px;
+            background: #F44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Arial Black', Arial, sans-serif;
+        }
+        
+        .reset-btn:hover {
+            background: #D32F2F;
+        }
+        
+        .reset-btn:active {
+            transform: scale(0.95);
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .reset-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 MINECRAFT REWARD CHART 🎮</h1>
+        <div class="subtitle">Earn 15 Minecoins for each block!</div>
+        
+        <div class="total-display">
+            Total Earned: <span id="totalCoins">0</span> / 1510 Minecoins
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 0%">
+                <span id="progressText">0%</span>
+            </div>
+        </div>
+        
+        <div class="chart-grid" id="chartGrid"></div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: #8B4513;"></div>
+                <span>Not Earned</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #4CAF50;"></div>
+                <span>Completed!</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #424242;"></div>
+                <span>⛏️ Coal (505)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #BDBDBD;"></div>
+                <span>⛏️ Iron (1010)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: linear-gradient(135deg, #00BCD4, #0097A7);"></div>
+                <span>💎 Diamond (1510)</span>
+            </div>
+        </div>
+        
+        <button class="reset-btn" id="resetBtn">Reset Chart</button>
+    </div>
+    
+    <script>
+        const totalBlocks = 101;
+        const coinsPerBlock = 15;
+        
+        // Milestone blocks (at specific coin amounts)
+        const milestones = {
+            34: 'coal',    // 505 coins (33.67 blocks, round to 34)
+            67: 'iron',    // 1010 coins (67.33 blocks, round to 67)
+            101: 'diamond' // 1510 coins (exactly 101 blocks)
+        };
+        
+        function initChart() {
+            const grid = document.getElementById('chartGrid');
+            grid.innerHTML = '';
+            
+            const saved = JSON.parse(localStorage.getItem('minecraftRewards') || '[]');
+            
+            for (let i = 1; i <= totalBlocks; i++) {
+                const block = document.createElement('div');
+                block.className = 'block';
+                block.dataset.block = i;
+                
+                const coins = i * coinsPerBlock;
+                
+                // Check if this is a milestone block
+                if (milestones[i]) {
+                    block.classList.add(milestones[i]);
+                    const label = document.createElement('div');
+                    label.className = 'milestone-label';
+                    label.textContent = '⭐';
+                    block.appendChild(label);
+                }
+                
+                if (saved.includes(i)) {
+                    block.classList.add('completed');
+                }
+                
+                const coinText = document.createElement('div');
+                coinText.textContent = `${coins}`;
+                block.appendChild(coinText);
+                
+                const blockNum = document.createElement('div');
+                blockNum.className = 'block-number';
+                blockNum.textContent = `#${i}`;
+                block.appendChild(blockNum);
+                
+                block.onclick = () => toggleBlock(i);
+                grid.appendChild(block);
+            }
+            
+            updateProgress();
+        }
+        
+        function toggleBlock(blockNum) {
+            const saved = JSON.parse(localStorage.getItem('minecraftRewards') || '[]');
+            const index = saved.indexOf(blockNum);
+            
+            if (index > -1) {
+                saved.splice(index, 1);
+            } else {
+                saved.push(blockNum);
+            }
+            
+            localStorage.setItem('minecraftRewards', JSON.stringify(saved));
+            initChart();
+        }
+        
+        function updateProgress() {
+            const saved = JSON.parse(localStorage.getItem('minecraftRewards') || '[]');
+            const totalCoins = saved.length * coinsPerBlock;
+            const percentage = (saved.length / totalBlocks * 100).toFixed(1);
+            
+            document.getElementById('totalCoins').textContent = totalCoins;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = percentage + '%';
+        }
+        
+        function resetChart() {
+            if (confirm('Are you sure you want to reset the entire chart?')) {
+                localStorage.removeItem('minecraftRewards');
+                initChart();
+            }
+        }
+        
+        // Add event listener to reset button
+        document.getElementById('resetBtn').addEventListener('click', resetChart);
+        
+        initChart();
+    </script>
+</body>
+</html>
