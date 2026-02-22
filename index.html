@@ -1,302 +1,262 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Minecraft Reward Chart</title>
     <style>
+      body {
+        font-family: "Arial Black", Arial, sans-serif;
+        background: linear-gradient(to bottom, #87ceeb 0%, #98d8c8 50%, #7cb342 100%);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        cursor:
+          url("assets/diamond_pickaxe_32.png") 0 0,
+          auto;
+      }
+
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        max-width: 900px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #2e7d32;
+        font-size: 2.5em;
+        margin: 0 0 10px 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 8px;
+        margin: 20px 0;
+      }
+
+      .block {
+        aspect-ratio: 1;
+        border: 3px solid #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        cursor:
+          url("assets/diamond_pickaxe_32.png") 0 0,
+          pointer;
+        transition: transform 0.2s;
+        color: white;
+        font-size: 0.7em;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        image-rendering: pixelated;
+        text-shadow:
+          1px 1px 2px rgba(0, 0, 0, 0.8),
+          -1px -1px 2px rgba(0, 0, 0, 0.5);
+      }
+
+      .block:hover {
+        transform: scale(1.1);
+        z-index: 1;
+      }
+
+      .block.completed {
+        background: white !important;
+        background-image: none !important;
+        border-color: transparent !important;
+      }
+
+      .block.completed > div {
+        visibility: hidden;
+      }
+
+      .block-number {
+        font-size: 0.9em;
+        margin-top: 2px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 30px;
+        background: #e0e0e0;
+        border-radius: 15px;
+        overflow: hidden;
+        margin: 20px 0;
+        border: 3px solid #333;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4caf50 0%, #8bc34a 100%);
+        transition: width 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        color: white;
+        font-weight: bold;
+      }
+
+      .total-display {
+        text-align: center;
+        font-size: 2em;
+        color: #2e7d32;
+        margin: 10px 0;
+      }
+
+      .reset-btn {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 30px;
+        background-color: #c44;
+        background-image: url("assets/tnt_side.png");
+        background-size: 64px 64px;
+        background-repeat: repeat-x;
+        background-position: center;
+        height: 64px;
+        image-rendering: pixelated;
+        color: white;
+        border: 3px solid #333;
+        border-radius: 5px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor:
+          url("assets/diamond_pickaxe_32.png") 0 0,
+          pointer;
+        font-family: "Arial Black", Arial, sans-serif;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+      }
+
+      .reset-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .reset-btn:active {
+        transform: scale(0.95);
+      }
+
+      @media print {
         body {
-            font-family: 'Arial Black', Arial, sans-serif;
-            background: linear-gradient(to bottom, #87CEEB 0%, #98D8C8 50%, #7CB342 100%);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            cursor: url('assets/diamond_pickaxe_32.png') 0 0, auto;
+          background: white;
         }
-
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            max-width: 900px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #2E7D32;
-            font-size: 2.5em;
-            margin: 0 0 10px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 8px;
-            margin: 20px 0;
-        }
-
-        .block {
-            aspect-ratio: 1;
-            border: 3px solid #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            cursor: url('assets/diamond_pickaxe_32.png') 0 0, pointer;
-            transition: transform 0.2s;
-            color: white;
-            font-size: 0.7em;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            image-rendering: pixelated;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.5);
-        }
-
-        .block:hover {
-            transform: scale(1.1);
-            z-index: 1;
-        }
-
-        .block.milestone {
-            border-color: #FFD700;
-            border-width: 3px;
-        }
-
-        .block.completed {
-            background: white !important;
-            background-image: none !important;
-            border-color: transparent !important;
-        }
-
-        .block.completed > div {
-            visibility: hidden;
-        }
-
-        .block-number {
-            font-size: 0.9em;
-            margin-top: 2px;
-        }
-
-        .milestone-label {
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            background: gold;
-            color: black;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 0.7em;
-            text-shadow: none;
-        }
-
-
-        .progress-bar {
-            width: 100%;
-            height: 30px;
-            background: #E0E0E0;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 20px 0;
-            border: 3px solid #333;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-            transition: width 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
-            color: white;
-            font-weight: bold;
-        }
-
-        .total-display {
-            text-align: center;
-            font-size: 2em;
-            color: #2E7D32;
-            margin: 10px 0;
-        }
-
         .reset-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 30px;
-            background-color: #c44;
-            background-image: url('assets/tnt_side.png');
-            background-size: 64px 64px;
-            background-repeat: repeat-x;
-            background-position: center;
-            height: 64px;
-            image-rendering: pixelated;
-            color: white;
-            border: 3px solid #333;
-            border-radius: 5px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: url('assets/diamond_pickaxe_32.png') 0 0, pointer;
-            font-family: 'Arial Black', Arial, sans-serif;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+          display: none;
         }
-
-        .reset-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .reset-btn:active {
-            transform: scale(0.95);
-        }
-
-        @media print {
-            body {
-                background: white;
-            }
-            .reset-btn {
-                display: none;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>🎮 MINECRAFT REWARD CHART 🎮</h1>
-        <div class="subtitle">Mine all the blocks!</div>
+      <h1>🎮 MINECRAFT REWARD CHART 🎮</h1>
 
-        <div class="total-display">
-            Blocks Mined: <span id="totalMined">0</span> / 101
+      <div class="total-display">Blocks Mined: <span id="totalMined">0</span> / 101</div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressBar" style="width: 0%">
+          <span id="progressText">0%</span>
         </div>
+      </div>
 
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressBar" style="width: 0%">
-                <span id="progressText">0%</span>
-            </div>
-        </div>
+      <div class="chart-grid" id="chartGrid"></div>
 
-        <div class="chart-grid" id="chartGrid"></div>
-
-
-        <button class="reset-btn" id="resetBtn">&nbsp;</button>
+      <button class="reset-btn" id="resetBtn">&nbsp;</button>
     </div>
 
     <script>
-        const totalBlocks = 101;
+      const totalBlocks = 101;
 
-        // Layered textures like Minecraft world (top to bottom)
-        // Row 1 (1-10): Grass, Rows 2-3 (11-30): Dirt, Rows 4-7 (31-70): Cobblestone, Rows 8-11 (71-101): Deepslate
-        function getLayerTexture(blockNum) {
-            const row = Math.ceil(blockNum / 10);
-            if (row <= 1) return 'assets/grass_block_side.png';
-            if (row <= 3) return 'assets/coarse_dirt.png';
-            if (row <= 7) return 'assets/cobblestone.png';
-            return 'assets/deepslate.png';
+      // Layered textures like Minecraft world (top to bottom)
+      // Row 1 (1-10): Grass, Rows 2-3 (11-30): Dirt, Rows 4-7 (31-70): Cobblestone, Rows 8-11 (71-101): Deepslate
+      function getLayerTexture(blockNum) {
+        const row = Math.ceil(blockNum / 10);
+        if (row <= 1) return "assets/grass_block_side.png";
+        if (row <= 3) return "assets/coarse_dirt.png";
+        if (row <= 7) return "assets/cobblestone.png";
+        return "assets/deepslate.png";
+      }
+
+      const milestoneTextures = {
+        31: "assets/coal_ore.png",
+        51: "assets/iron_ore.png",
+        71: "assets/deepslate_emerald_ore.png",
+        81: "assets/deepslate_gold_ore.png",
+        91: "assets/deepslate_redstone_ore.png",
+        101: "assets/deepslate_diamond_ore.png",
+      };
+
+      function getBlockTexture(blockNum) {
+        return milestoneTextures[blockNum] || getLayerTexture(blockNum);
+      }
+
+      function initChart() {
+        const grid = document.getElementById("chartGrid");
+        grid.innerHTML = "";
+
+        const saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
+
+        for (let i = 1; i <= totalBlocks; i++) {
+          const block = document.createElement("div");
+          block.className = "block";
+          block.style.backgroundImage = `url('${getBlockTexture(i)}')`;
+          if (saved.includes(i)) {
+            block.classList.add("completed");
+          }
+
+          const blockNum = document.createElement("div");
+          blockNum.className = "block-number";
+          blockNum.textContent = `#${i}`;
+          block.appendChild(blockNum);
+
+          block.onclick = () => toggleBlock(i);
+          grid.appendChild(block);
         }
 
-        // Milestone blocks
-        const milestones = {
-            31: { type: 'coal', texture: 'assets/coal_ore.png', label: '⛏️ Coal' },
-            51: { type: 'iron', texture: 'assets/iron_ore.png', label: '⛏️ Iron' },
-            71: { type: 'emerald', texture: 'assets/deepslate_emerald_ore.png', label: '💚 Emerald' },
-            81: { type: 'gold', texture: 'assets/deepslate_gold_ore.png', label: '💛 Gold' },
-            91: { type: 'redstone', texture: 'assets/deepslate_redstone_ore.png', label: '❤️ Redstone' },
-            101: { type: 'diamond', texture: 'assets/deepslate_diamond_ore.png', label: '💎 Diamond' }
-        };
+        updateProgress();
+      }
 
-        function getBlockTexture(blockNum) {
-            if (milestones[blockNum]) {
-                return milestones[blockNum].texture;
-            }
-            return getLayerTexture(blockNum);
+      function toggleBlock(blockNum) {
+        const saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
+        const index = saved.indexOf(blockNum);
+
+        if (index > -1) {
+          saved.splice(index, 1);
+        } else {
+          saved.push(blockNum);
         }
 
-        function initChart() {
-            const grid = document.getElementById('chartGrid');
-            grid.innerHTML = '';
-
-            const saved = JSON.parse(localStorage.getItem('minecraftRewards') || '[]');
-
-            for (let i = 1; i <= totalBlocks; i++) {
-                const block = document.createElement('div');
-                block.className = 'block';
-                block.dataset.block = i;
-
-                const isCompleted = saved.includes(i);
-
-                // Set texture
-                block.style.backgroundImage = `url('${getBlockTexture(i)}')`;
-                if (isCompleted) {
-                    block.classList.add('completed');
-                }
-
-                // Check if this is a milestone block
-                if (milestones[i]) {
-                    // block.classList.add('milestone');
-                    const label = document.createElement('div');
-                    // label.className = 'milestone-label';
-                    // label.textContent = '⭐';
-                    block.appendChild(label);
-                }
-
-                const blockNum = document.createElement('div');
-                blockNum.className = 'block-number';
-                blockNum.textContent = `#${i}`;
-                block.appendChild(blockNum);
-
-                block.onclick = () => toggleBlock(i);
-                grid.appendChild(block);
-            }
-
-            updateProgress();
-        }
-
-        function toggleBlock(blockNum) {
-            const saved = JSON.parse(localStorage.getItem('minecraftRewards') || '[]');
-            const index = saved.indexOf(blockNum);
-
-            if (index > -1) {
-                saved.splice(index, 1);
-            } else {
-                saved.push(blockNum);
-            }
-
-            localStorage.setItem('minecraftRewards', JSON.stringify(saved));
-            initChart();
-        }
-
-        function updateProgress() {
-            const saved = JSON.parse(localStorage.getItem('minecraftRewards') || '[]');
-            const percentage = (saved.length / totalBlocks * 100).toFixed(1);
-
-            document.getElementById('totalMined').textContent = saved.length;
-            document.getElementById('progressBar').style.width = percentage + '%';
-            document.getElementById('progressText').textContent = percentage + '%';
-        }
-
-        function resetChart() {
-            if (confirm('Are you sure you want to reset the entire chart?')) {
-                localStorage.removeItem('minecraftRewards');
-                initChart();
-            }
-        }
-
-        // Add event listener to reset button
-        document.getElementById('resetBtn').addEventListener('click', resetChart);
-
+        localStorage.setItem("minecraftRewards", JSON.stringify(saved));
         initChart();
+      }
+
+      function updateProgress() {
+        const saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
+        const percentage = ((saved.length / totalBlocks) * 100).toFixed(1);
+
+        document.getElementById("totalMined").textContent = saved.length;
+        document.getElementById("progressBar").style.width = percentage + "%";
+        document.getElementById("progressText").textContent = percentage + "%";
+      }
+
+      function resetChart() {
+        if (confirm("Are you sure you want to reset the entire chart?")) {
+          localStorage.removeItem("minecraftRewards");
+          initChart();
+        }
+      }
+
+      document.getElementById("resetBtn").addEventListener("click", resetChart);
+
+      initChart();
     </script>
-</body>
+  </body>
 </html>
