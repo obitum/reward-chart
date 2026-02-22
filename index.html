@@ -80,6 +80,15 @@
         visibility: hidden;
       }
 
+      .block.tnt {
+        background-image: url("assets/tnt_side.png") !important;
+      }
+
+      .block.tnt.flash {
+        background: white !important;
+        background-image: none !important;
+      }
+
       .block-number {
         font-size: 0.9em;
         margin-top: 2px;
@@ -225,6 +234,7 @@
       }
 
       function toggleBlock(blockNum) {
+        if (animating) return;
         const saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
         const index = saved.indexOf(blockNum);
 
@@ -247,14 +257,53 @@
         document.getElementById("progressText").textContent = percentage + "%";
       }
 
-      function resetChart() {
-        if (confirm("Are you sure you want to reset the entire chart?")) {
-          localStorage.removeItem("minecraftRewards");
-          initChart();
+      let animating = false;
+
+      function triggerTNT() {
+        if (animating) return;
+        animating = true;
+
+        const blocks = document.querySelectorAll(".block");
+        const indices = [];
+        // Pick non-completed block indices for TNT placement
+        blocks.forEach((b, i) => {
+          if (!b.classList.contains("completed")) indices.push(i);
+        });
+
+        // Shuffle and pick 8-12 random positions
+        for (let i = indices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [indices[i], indices[j]] = [indices[j], indices[i]];
         }
+        const count = Math.min(8 + Math.floor(Math.random() * 5), indices.length);
+        const tntIndices = indices.slice(0, count);
+
+        // Step 1: Place TNT blocks
+        tntIndices.forEach((i) => blocks[i].classList.add("tnt"));
+
+        // Step 2: Flash 3 times (250ms on, 250ms off per cycle = 1.5s total)
+        let flashes = 0;
+        const flashInterval = setInterval(() => {
+          tntIndices.forEach((i) => blocks[i].classList.toggle("flash"));
+          flashes++;
+          if (flashes >= 6) {
+            clearInterval(flashInterval);
+            // Step 3: Explode — all blocks go white
+            blocks.forEach((b) => {
+              b.classList.remove("tnt", "flash");
+              b.classList.add("completed");
+            });
+            // Step 4: Reset after a brief pause
+            setTimeout(() => {
+              localStorage.removeItem("minecraftRewards");
+              animating = false;
+              initChart();
+            }, 600);
+          }
+        }, 250);
       }
 
-      document.getElementById("resetBtn").addEventListener("click", resetChart);
+      document.getElementById("resetBtn").addEventListener("click", triggerTNT);
 
       initChart();
     </script>
