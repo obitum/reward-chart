@@ -15,7 +15,7 @@
         align-items: center;
         min-height: 100vh;
         cursor:
-          url("assets/diamond_pickaxe_32.png") 0 0,
+          url("assets/textures/cursors/diamond_pickaxe_32.png") 0 0,
           auto;
       }
 
@@ -51,7 +51,7 @@
         justify-content: center;
         font-weight: bold;
         cursor:
-          url("assets/diamond_pickaxe_32.png") 0 0,
+          url("assets/textures/cursors/diamond_pickaxe_32.png") 0 0,
           pointer;
         transition: transform 0.2s;
         color: white;
@@ -81,7 +81,7 @@
       }
 
       .block.tnt {
-        background-image: url("assets/tnt_side.png") !important;
+        background-image: url("assets/textures/blocks/tnt_side.png") !important;
       }
 
       .block.tnt.flash {
@@ -143,7 +143,7 @@
         margin: 20px auto;
         padding: 10px 30px;
         background-color: #c44;
-        background-image: url("assets/tnt_side.png");
+        background-image: url("assets/textures/blocks/tnt_side.png");
         background-size: 64px 64px;
         background-repeat: repeat-x;
         background-position: center;
@@ -155,7 +155,7 @@
         font-size: 1em;
         font-weight: bold;
         cursor:
-          url("assets/diamond_pickaxe_32.png") 0 0,
+          url("assets/textures/cursors/diamond_pickaxe_32.png") 0 0,
           pointer;
         font-family: "Arial Black", Arial, sans-serif;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
@@ -203,19 +203,19 @@
       // Row 1 (1-10): Grass, Rows 2-3 (11-30): Dirt, Rows 4-7 (31-70): Cobblestone, Rows 8-11 (71-101): Deepslate
       function getLayerTexture(blockNum) {
         const row = Math.ceil(blockNum / 10);
-        if (row <= 1) return "assets/grass_block_side.png";
-        if (row <= 3) return "assets/coarse_dirt.png";
-        if (row <= 7) return "assets/cobblestone.png";
-        return "assets/deepslate.png";
+        if (row <= 1) return "assets/textures/blocks/grass_block_side.png";
+        if (row <= 3) return "assets/textures/blocks/coarse_dirt.png";
+        if (row <= 7) return "assets/textures/blocks/cobblestone.png";
+        return "assets/textures/blocks/deepslate.png";
       }
 
       const milestoneTextures = {
-        31: "assets/coal_ore.png",
-        51: "assets/iron_ore.png",
-        71: "assets/deepslate_emerald_ore.png",
-        81: "assets/deepslate_gold_ore.png",
-        91: "assets/deepslate_redstone_ore.png",
-        101: "assets/deepslate_diamond_ore.png",
+        31: "assets/textures/blocks/coal_ore.png",
+        51: "assets/textures/blocks/iron_ore.png",
+        71: "assets/textures/blocks/deepslate_emerald_ore.png",
+        81: "assets/textures/blocks/deepslate_gold_ore.png",
+        91: "assets/textures/blocks/deepslate_redstone_ore.png",
+        101: "assets/textures/blocks/deepslate_diamond_ore.png",
       };
 
       function getBlockTexture(blockNum) {
@@ -250,7 +250,7 @@
 
       function toggleBlock(blockNum) {
         if (animating) return;
-        new Audio(`assets/stone${Math.floor(Math.random() * 4) + 1}.ogg`).play();
+        new Audio(`assets/sounds/dig/stone${Math.floor(Math.random() * 4) + 1}.ogg`).play();
         const saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
         const index = saved.indexOf(blockNum);
 
@@ -297,7 +297,7 @@
         });
 
         // Play fuse sound during flash phase
-        const fuseSound = new Audio("assets/fuse.ogg");
+        const fuseSound = new Audio("assets/sounds/explosion/fuse.ogg");
         fuseSound.play();
 
         // Step 2: Flash 3 times (250ms on, 250ms off per cycle = 1.5s total)
@@ -310,7 +310,7 @@
 
             // Step 3: Single big explosion over the whole grid
             fuseSound.pause();
-            new Audio(`assets/explode${Math.floor(Math.random() * 4) + 1}.ogg`).play();
+            new Audio(`assets/sounds/explosion/explode${Math.floor(Math.random() * 4) + 1}.ogg`).play();
             tntIndices.forEach((i) => blocks[i].classList.remove("tnt", "flash"));
 
             const grid = document.getElementById("chartGrid");
@@ -357,7 +357,7 @@
               sprites.forEach((s) => {
                 const f = tick - s.delay;
                 if (f >= 0 && f < explosionFrames) {
-                  s.el.style.backgroundImage = `url('assets/explosion_${f}.png')`;
+                  s.el.style.backgroundImage = `url('assets/sprites/explosion/explosion_${f}.png')`;
                 } else if (f >= explosionFrames) {
                   s.el.style.backgroundImage = "none";
                 }
