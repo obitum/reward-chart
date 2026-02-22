@@ -137,9 +137,12 @@
             display: block;
             margin: 20px auto;
             padding: 10px 30px;
-            background: #F44336;
+            background-color: #c44;
             background-image: url('assets/tnt_side.png');
             background-size: 64px 64px;
+            background-repeat: repeat-x;
+            background-position: center;
+            height: 64px;
             image-rendering: pixelated;
             color: white;
             border: 3px solid #333;
@@ -172,10 +175,10 @@
 <body>
     <div class="container">
         <h1>🎮 MINECRAFT REWARD CHART 🎮</h1>
-        <div class="subtitle">Earn 15 Minecoins for each block!</div>
+        <div class="subtitle">Mine all the blocks!</div>
 
         <div class="total-display">
-            Total Earned: <span id="totalCoins">0</span> / 1515 Minecoins
+            Blocks Mined: <span id="totalMined">0</span> / 101
         </div>
 
         <div class="progress-bar">
@@ -187,12 +190,11 @@
         <div class="chart-grid" id="chartGrid"></div>
 
 
-        <button class="reset-btn" id="resetBtn">💥 Reset Chart 💥</button>
+        <button class="reset-btn" id="resetBtn">&nbsp;</button>
     </div>
 
     <script>
         const totalBlocks = 101;
-        const coinsPerBlock = 15;
 
         // Layered textures like Minecraft world (top to bottom)
         // Row 1 (1-10): Grass, Rows 2-3 (11-30): Dirt, Rows 4-7 (31-70): Cobblestone, Rows 8-11 (71-101): Deepslate
@@ -232,7 +234,6 @@
                 block.className = 'block';
                 block.dataset.block = i;
 
-                const coins = i * coinsPerBlock;
                 const isCompleted = saved.includes(i);
 
                 // Set texture
@@ -243,16 +244,12 @@
 
                 // Check if this is a milestone block
                 if (milestones[i]) {
-                    block.classList.add('milestone');
+                    // block.classList.add('milestone');
                     const label = document.createElement('div');
-                    label.className = 'milestone-label';
-                    label.textContent = '⭐';
+                    // label.className = 'milestone-label';
+                    // label.textContent = '⭐';
                     block.appendChild(label);
                 }
-
-                const coinText = document.createElement('div');
-                coinText.textContent = `${coins}`;
-                block.appendChild(coinText);
 
                 const blockNum = document.createElement('div');
                 blockNum.className = 'block-number';
@@ -282,10 +279,9 @@
 
         function updateProgress() {
             const saved = JSON.parse(localStorage.getItem('minecraftRewards') || '[]');
-            const totalCoins = saved.length * coinsPerBlock;
             const percentage = (saved.length / totalBlocks * 100).toFixed(1);
 
-            document.getElementById('totalCoins').textContent = totalCoins;
+            document.getElementById('totalMined').textContent = saved.length;
             document.getElementById('progressBar').style.width = percentage + '%';
             document.getElementById('progressText').textContent = percentage + '%';
         }
