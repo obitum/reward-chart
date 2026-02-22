@@ -308,17 +308,36 @@
             tntIndices.forEach((i) => blocks[i].classList.remove("tnt", "flash"));
 
             const grid = document.getElementById("chartGrid");
-            const sprite = document.createElement("div");
-            sprite.className = "grid-explosion";
-            grid.appendChild(sprite);
-
             const explosionFrames = 16;
             const frameDuration = 60;
-            let frame = 0;
+
+            // Spawn multiple explosion layers at randomised sizes and positions
+            const layerCount = 4 + Math.floor(Math.random() * 3);
+            const layers = Array.from({ length: layerCount }, (_, i) => ({
+              size: 50 + Math.floor(Math.random() * 80),
+              x: -30 + Math.floor(Math.random() * 60),
+              y: -30 + Math.floor(Math.random() * 60),
+              delay: Math.floor(Math.random() * 5),
+            }));
+
+            const sprites = layers.map((l) => {
+              const s = document.createElement("div");
+              s.className = "grid-explosion";
+              s.style.inset = "0";
+              s.style.width = l.size + "%";
+              s.style.height = l.size + "%";
+              s.style.left = l.x + "%";
+              s.style.top = l.y + "%";
+              grid.appendChild(s);
+              return { el: s, delay: l.delay, frame: -l.delay };
+            });
+
+            let tick = 0;
+            const maxTicks = explosionFrames + Math.max(...layers.map((l) => l.delay));
             const spriteInterval = setInterval(() => {
-              if (frame >= explosionFrames) {
+              if (tick >= maxTicks) {
                 clearInterval(spriteInterval);
-                sprite.remove();
+                sprites.forEach((s) => s.el.remove());
 
                 // Step 4: White out all blocks then reset
                 blocks.forEach((b) => b.classList.add("completed"));
@@ -329,8 +348,15 @@
                 }, 600);
                 return;
               }
-              sprite.style.backgroundImage = `url('assets/explosion_${frame}.png')`;
-              frame++;
+              sprites.forEach((s) => {
+                const f = tick - s.delay;
+                if (f >= 0 && f < explosionFrames) {
+                  s.el.style.backgroundImage = `url('assets/explosion_${f}.png')`;
+                } else if (f >= explosionFrames) {
+                  s.el.style.backgroundImage = "none";
+                }
+              });
+              tick++;
             }, frameDuration);
           }
         }, 250);
