@@ -4,7 +4,7 @@ A Minecraft-themed reward chart for kids. Click blocks to "mine" them and track 
 
 ## Architecture
 
-Single-file web app (`index.html`) with inline CSS and JS. No build tools, no frameworks, no dependencies. Opens directly in a browser.
+Simple web app with `index.html` (markup and JS) and `styles.css`. No build tools, no frameworks, no dependencies. Opens directly in a browser.
 
 - State is persisted in `localStorage` under the key `minecraftRewards` (array of completed block numbers).
 - All textures and sounds are sourced from [minecraft-assets (1.20.6)](https://github.com/InventivetalentDev/minecraft-assets/blob/1.20.6/assets/minecraft) and rendered with `image-rendering: pixelated`.
@@ -32,7 +32,7 @@ assets/
 
 ## Conventions
 
-- Keep everything in a single `index.html`. No splitting into separate CSS/JS files.
+- CSS lives in `assets/styles.css`, JS stays inline in `index.html`.
 - Use vanilla HTML/CSS/JS only. No libraries or frameworks.
 - Minecraft aesthetic: pixelated rendering, authentic textures and sounds, blocky UI.
 - Custom cursor (diamond pickaxe) on all interactive elements.
