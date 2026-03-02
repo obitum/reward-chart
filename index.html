@@ -22,7 +22,10 @@
 
       <div class="chart-grid" id="chartGrid"></div>
 
-      <button class="reset-btn" id="resetBtn">&nbsp;</button>
+      <div class="button-row">
+        <button class="tool-btn flint-btn" id="flintBtn">&nbsp;</button>
+        <button class="tool-btn reset-btn" id="resetBtn">&nbsp;</button>
+      </div>
     </div>
 
     <script>
@@ -45,6 +48,15 @@
         81: "assets/textures/blocks/deepslate_gold_ore.png",
         91: "assets/textures/blocks/deepslate_redstone_ore.png",
         101: "assets/textures/blocks/deepslate_diamond_ore.png",
+      };
+
+      const milestoneItems = {
+        31: "assets/textures/items/coal.png",
+        51: "assets/textures/items/raw_iron.png",
+        71: "assets/textures/items/emerald.png",
+        81: "assets/textures/items/raw_gold.png",
+        91: "assets/textures/items/redstone.png",
+        101: "assets/textures/items/diamond.png",
       };
 
       function getBlockTexture(blockNum) {
@@ -77,8 +89,16 @@
         updateProgress();
       }
 
+      let currentTool = "pickaxe";
+
+      function setTool(tool) {
+        currentTool = tool;
+        document.body.classList.toggle("tool-flint", tool === "flint");
+        document.getElementById("flintBtn").classList.toggle("active", tool === "flint");
+      }
+
       function toggleBlock(blockNum) {
-        if (animating) return;
+        if (animating || currentTool !== "pickaxe") return;
         new Audio(`assets/sounds/dig/stone${Math.floor(Math.random() * 4) + 1}.ogg`).play();
         const saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
         const index = saved.indexOf(blockNum);
@@ -92,7 +112,19 @@
         localStorage.setItem("minecraftRewards", JSON.stringify(saved));
 
         const block = document.querySelectorAll(".block")[blockNum - 1];
-        block.classList.toggle("completed");
+        const wasMined = block.classList.toggle("completed");
+
+        // Pop an item drop out of milestone blocks when mined
+        if (wasMined && milestoneItems[blockNum]) {
+          const img = document.createElement("img");
+          img.src = milestoneItems[blockNum];
+          img.className = "item-drop";
+          img.style.left = "50%";
+          img.style.top = "50%";
+          block.appendChild(img);
+          img.addEventListener("animationend", () => img.remove());
+        }
+
         updateProgress();
       }
 
@@ -182,6 +214,7 @@
                 setTimeout(() => {
                   localStorage.removeItem("minecraftRewards");
                   animating = false;
+                  setTool("pickaxe");
                   initChart();
                 }, 600);
                 return;
@@ -200,7 +233,14 @@
         }, 250);
       }
 
-      document.getElementById("resetBtn").addEventListener("click", triggerTNT);
+      document.getElementById("flintBtn").addEventListener("click", () => {
+        if (animating) return;
+        setTool(currentTool === "flint" ? "pickaxe" : "flint");
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        if (currentTool === "flint") triggerTNT();
+      });
 
       initChart();
     </script>

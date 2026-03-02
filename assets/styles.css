@@ -101,6 +101,31 @@ h1 {
   z-index: 10;
 }
 
+.item-drop {
+  position: absolute;
+  width: 75%;
+  height: 75%;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 20;
+  animation: item-pop 0.6s ease-out forwards;
+}
+
+@keyframes item-pop {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -180%) scale(1) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -220%) scale(0.8) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 .block-number {
   font-size: 0.9em;
   margin-top: 2px;
@@ -135,15 +160,15 @@ h1 {
   margin: 10px 0;
 }
 
-.reset-btn {
-  display: block;
-  margin: 20px auto;
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.tool-btn {
   padding: 10px 30px;
-  background-color: #c44;
-  background-image: url("textures/blocks/tnt_side.png");
-  background-size: 64px 64px;
-  background-repeat: repeat-x;
-  background-position: center;
   height: 64px;
   image-rendering: pixelated;
   color: white;
@@ -158,19 +183,56 @@ h1 {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-.reset-btn:hover {
+.tool-btn:hover {
   transform: scale(1.05);
 }
 
-.reset-btn:active {
+.tool-btn:active {
   transform: scale(0.95);
+}
+
+.tool-btn.active {
+  border-color: #fff;
+  box-shadow:
+    0 0 0 3px #333,
+    inset 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.flint-btn.active {
+  background-image: url("textures/cursors/diamond_pickaxe_32.png");
+  background-size: 48px 48px;
+}
+
+.reset-btn {
+  background-color: #c44;
+  background-image: url("textures/blocks/tnt_side.png");
+  background-size: 64px 64px;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+.flint-btn {
+  background-color: #555;
+  background-image: url("textures/items/flint_and_steel.png");
+  background-size: 48px 48px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Flint & steel cursor mode */
+body.tool-flint,
+body.tool-flint .block,
+body.tool-flint .tool-btn {
+  cursor:
+    url("textures/cursors/flint_and_steel_32.png") 0 0,
+    pointer;
 }
 
 @media print {
   body {
     background: white;
   }
-  .reset-btn {
+  .button-row {
     display: none;
   }
 }
