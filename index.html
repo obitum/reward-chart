@@ -10,21 +10,30 @@
   </head>
   <body>
     <div class="container">
-      <h1><img src="assets/icons/icon_32x32.png" class="title-icon" alt=""> MINECRAFT REWARD CHART <img src="assets/icons/icon_32x32.png" class="title-icon" alt=""></h1>
-
-      <div class="total-display">Blocks Mined: <span id="totalMined">0</span> / 101</div>
-
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressBar" style="width: 0%">
-          <span id="progressText">0%</span>
-        </div>
-      </div>
-
       <div class="chart-grid" id="chartGrid"></div>
 
-      <div class="button-row">
-        <button class="tool-btn flint-btn" id="flintBtn">&nbsp;</button>
-        <button class="tool-btn reset-btn" id="resetBtn">&nbsp;</button>
+      <div class="xp-bar">
+        <div class="xp-fill" id="progressBar" style="width: 0%"></div>
+        <span class="xp-text" id="progressText">0 / 101</span>
+      </div>
+
+      <div class="toolbar">
+        <button class="toolbar-slot active" id="pickaxeBtn" title="Diamond Pickaxe">
+          <img src="assets/textures/cursors/diamond_pickaxe_32.png" alt="Pickaxe">
+        </button>
+        <button class="toolbar-slot" id="flintBtn" title="Flint & Steel">
+          <img src="assets/textures/items/flint_and_steel.png" alt="Flint & Steel">
+        </button>
+        <div class="toolbar-slot empty"></div>
+        <div class="toolbar-slot empty"></div>
+        <div class="toolbar-slot empty"></div>
+        <div class="toolbar-slot empty"></div>
+        <div class="toolbar-slot empty"></div>
+        <div class="toolbar-slot empty"></div>
+        <div class="toolbar-slot empty"></div>
+        <button class="toolbar-slot" id="resetBtn" title="TNT">
+          <img src="assets/textures/blocks/tnt_side.png" alt="TNT">
+        </button>
       </div>
     </div>
 
@@ -94,6 +103,7 @@
       function setTool(tool) {
         currentTool = tool;
         document.body.classList.toggle("tool-flint", tool === "flint");
+        document.getElementById("pickaxeBtn").classList.toggle("active", tool === "pickaxe");
         document.getElementById("flintBtn").classList.toggle("active", tool === "flint");
       }
 
@@ -132,9 +142,8 @@
         const saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
         const percentage = ((saved.length / totalBlocks) * 100).toFixed(1);
 
-        document.getElementById("totalMined").textContent = saved.length;
         document.getElementById("progressBar").style.width = percentage + "%";
-        document.getElementById("progressText").textContent = percentage + "%";
+        document.getElementById("progressText").textContent = saved.length + " / " + totalBlocks;
       }
 
       let animating = false;
@@ -233,9 +242,14 @@
         }, 250);
       }
 
+      document.getElementById("pickaxeBtn").addEventListener("click", () => {
+        if (animating) return;
+        setTool("pickaxe");
+      });
+
       document.getElementById("flintBtn").addEventListener("click", () => {
         if (animating) return;
-        setTool(currentTool === "flint" ? "pickaxe" : "flint");
+        setTool("flint");
       });
 
       document.getElementById("resetBtn").addEventListener("click", () => {
