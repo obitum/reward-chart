@@ -2,25 +2,24 @@ body {
   font-family: "Arial Black", Arial, sans-serif;
   background: url("textures/background.jpg") center / cover no-repeat fixed;
   margin: 0;
-  padding: 20px;
+  padding: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  min-height: 100vh;
-  cursor:
-    url("textures/cursors/diamond_pickaxe_32.png") 0 0,
-    auto;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .container {
   background: transparent;
-  padding: 10px 20px 20px;
+  padding: 10px 20px 10px;
   width: 100%;
   max-width: min(900px, 85vh);
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  min-height: calc(100vh - 40px);
+  justify-content: center;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -57,9 +56,7 @@ h1 {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  cursor:
-    url("textures/cursors/diamond_pickaxe_32.png") 0 0,
-    pointer;
+  cursor: pointer;
   transition: transform 0.2s;
   color: white;
   font-size: 0.7em;
@@ -132,6 +129,29 @@ h1 {
   }
 }
 
+.diamond-rain {
+  position: fixed;
+  top: -50px;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 100;
+  animation: diamond-fall linear forwards;
+}
+
+@keyframes diamond-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
 .block-number {
   font-size: 0.9em;
   margin-top: 2px;
@@ -190,9 +210,7 @@ h1 {
   align-items: center;
   justify-content: center;
   padding: 0;
-  cursor:
-    url("textures/cursors/diamond_pickaxe_32.png") 0 0,
-    pointer;
+  cursor: pointer;
 }
 
 .toolbar-slot.empty {
@@ -219,15 +237,6 @@ button.toolbar-slot:active {
   box-shadow:
     inset 0 0 8px rgba(255, 204, 0, 0.4);
   background: #6a6a6a;
-}
-
-/* Flint & steel cursor mode */
-body.tool-flint,
-body.tool-flint .block,
-body.tool-flint .toolbar-slot {
-  cursor:
-    url("textures/cursors/flint_and_steel_32.png") 0 0,
-    pointer;
 }
 
 @media print {

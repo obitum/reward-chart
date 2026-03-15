@@ -102,7 +102,6 @@
 
       function setTool(tool) {
         currentTool = tool;
-        document.body.classList.toggle("tool-flint", tool === "flint");
         document.getElementById("pickaxeBtn").classList.toggle("active", tool === "pickaxe");
         document.getElementById("flintBtn").classList.toggle("active", tool === "flint");
       }
@@ -135,6 +134,11 @@
           img.addEventListener("animationend", () => img.remove());
         }
 
+        // Rain diamonds when block 101 is mined
+        if (wasMined && blockNum === 101) {
+          rainDiamonds();
+        }
+
         updateProgress();
       }
 
@@ -144,6 +148,21 @@
 
         document.getElementById("progressBar").style.width = percentage + "%";
         document.getElementById("progressText").textContent = saved.length + " / " + totalBlocks;
+      }
+
+      function rainDiamonds() {
+        const count = 40;
+        for (let i = 0; i < count; i++) {
+          const diamond = document.createElement("img");
+          diamond.src = "assets/textures/items/diamond.png";
+          diamond.className = "diamond-rain";
+          diamond.style.left = Math.random() * 100 + "vw";
+          diamond.style.animationDelay = Math.random() * 2 + "s";
+          diamond.style.animationDuration = 1.5 + Math.random() * 2 + "s";
+          diamond.style.width = 24 + Math.random() * 24 + "px";
+          document.body.appendChild(diamond);
+          diamond.addEventListener("animationend", () => diamond.remove());
+        }
       }
 
       let animating = false;
