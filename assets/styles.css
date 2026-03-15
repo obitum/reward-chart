@@ -160,18 +160,24 @@ h1 {
 .xp-bar {
   width: 100%;
   height: 10px;
-  background: url("textures/gui/experience_bar_background.png") left center / 100% 100% no-repeat;
+  background: url("textures/gui/experience_bar_background.png") left center / 50% 100% repeat-x;
   image-rendering: pixelated;
   margin: 4px 0 0;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .xp-fill {
   height: 100%;
-  background: url("textures/gui/experience_bar_progress.png") left center / cover no-repeat;
-  image-rendering: pixelated;
+  overflow: hidden;
   transition: width 0.3s;
+}
+
+.xp-fill-inner {
+  width: 0;
+  height: 100%;
+  background: url("textures/gui/experience_bar_progress.png") left center / 50% 100% repeat-x;
+  image-rendering: pixelated;
 }
 
 .xp-text {

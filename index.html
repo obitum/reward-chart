@@ -6,6 +6,7 @@
     <title>Minecraft Reward Chart</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon_32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/icon_16x16.png">
+    <link rel="apple-touch-icon" sizes="256x256" href="assets/icons/icon_256x256.png">
     <link rel="stylesheet" href="assets/styles.css" />
   </head>
   <body>
@@ -13,7 +14,9 @@
       <div class="chart-grid" id="chartGrid"></div>
 
       <div class="xp-bar">
-        <div class="xp-fill" id="progressBar" style="width: 0%"></div>
+        <div class="xp-fill" id="progressBar" style="width: 0%">
+          <div class="xp-fill-inner" id="progressInner"></div>
+        </div>
         <span class="xp-text" id="progressText">0 / 101</span>
       </div>
 
@@ -123,20 +126,9 @@
         const block = document.querySelectorAll(".block")[blockNum - 1];
         const wasMined = block.classList.toggle("completed");
 
-        // Pop an item drop out of milestone blocks when mined
+        // Rain the milestone item when a milestone block is mined
         if (wasMined && milestoneItems[blockNum]) {
-          const img = document.createElement("img");
-          img.src = milestoneItems[blockNum];
-          img.className = "item-drop";
-          img.style.left = "50%";
-          img.style.top = "50%";
-          block.appendChild(img);
-          img.addEventListener("animationend", () => img.remove());
-        }
-
-        // Rain diamonds when block 101 is mined
-        if (wasMined && blockNum === 101) {
-          rainDiamonds();
+          rainItems(milestoneItems[blockNum]);
         }
 
         updateProgress();
@@ -146,22 +138,25 @@
         const saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
         const percentage = ((saved.length / totalBlocks) * 100).toFixed(1);
 
-        document.getElementById("progressBar").style.width = percentage + "%";
+        const fill = document.getElementById("progressBar");
+        fill.style.width = percentage + "%";
+        const barWidth = fill.parentElement.offsetWidth;
+        document.getElementById("progressInner").style.width = barWidth + "px";
         document.getElementById("progressText").textContent = saved.length + " / " + totalBlocks;
       }
 
-      function rainDiamonds() {
+      function rainItems(src) {
         const count = 40;
         for (let i = 0; i < count; i++) {
-          const diamond = document.createElement("img");
-          diamond.src = "assets/textures/items/diamond.png";
-          diamond.className = "diamond-rain";
-          diamond.style.left = Math.random() * 100 + "vw";
-          diamond.style.animationDelay = Math.random() * 2 + "s";
-          diamond.style.animationDuration = 1.5 + Math.random() * 2 + "s";
-          diamond.style.width = 24 + Math.random() * 24 + "px";
-          document.body.appendChild(diamond);
-          diamond.addEventListener("animationend", () => diamond.remove());
+          const item = document.createElement("img");
+          item.src = src;
+          item.className = "diamond-rain";
+          item.style.left = Math.random() * 100 + "vw";
+          item.style.animationDelay = Math.random() * 2 + "s";
+          item.style.animationDuration = 1.5 + Math.random() * 2 + "s";
+          item.style.width = 24 + Math.random() * 24 + "px";
+          document.body.appendChild(item);
+          item.addEventListener("animationend", () => item.remove());
         }
       }
 
