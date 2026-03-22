@@ -270,7 +270,48 @@
         if (currentTool === "flint") triggerTNT();
       });
 
+      function fitContainer() {
+        const container = document.querySelector(".container");
+        const style = getComputedStyle(container);
+        const paddingY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+
+        // Measure fixed-height elements (XP bar + toolbar + their margins)
+        const xpBar = document.querySelector(".xp-bar");
+        const toolbar = document.querySelector(".toolbar");
+        const xpRect = xpBar.getBoundingClientRect();
+        const toolbarRect = toolbar.getBoundingClientRect();
+        const xpStyle = getComputedStyle(xpBar);
+        const toolbarStyle = getComputedStyle(toolbar);
+        const fixedH = xpRect.height + parseFloat(xpStyle.marginTop) + parseFloat(xpStyle.marginBottom)
+                     + toolbarRect.height + parseFloat(toolbarStyle.marginTop) + parseFloat(toolbarStyle.marginBottom);
+
+        // Available height for the grid
+        const viewH = window.innerHeight;
+        const gridH = viewH - paddingY - fixedH;
+
+        // Grid has 11 rows of square blocks, plus gaps and padding
+        const grid = document.getElementById("chartGrid");
+        const gridStyle = getComputedStyle(grid);
+        const gridGap = parseFloat(gridStyle.gap) || 4;
+        const gridPad = parseFloat(gridStyle.paddingTop) + parseFloat(gridStyle.paddingBottom);
+        const rows = 11;
+        const cols = 10;
+
+        // blockSize from available height (includes 3px border each side)
+        const blockBorder = 6;
+        const cellH = (gridH - gridPad - gridGap * (rows - 1)) / rows;
+        const blockSize = Math.max(cellH, 20);
+
+        // Ideal grid width for square blocks
+        const gridW = blockSize * cols + gridGap * (cols - 1) + parseFloat(gridStyle.paddingLeft) + parseFloat(gridStyle.paddingRight);
+        const containerW = gridW + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+
+        container.style.maxWidth = Math.min(900, containerW) + "px";
+      }
+
+      window.addEventListener("resize", fitContainer);
       initChart();
+      fitContainer();
     </script>
   </body>
 </html>
