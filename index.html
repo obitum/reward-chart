@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Minecraft Reward Chart</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon_32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/icon_16x16.png">
@@ -271,6 +271,17 @@
       });
 
       initChart();
+
+      // iOS Safari can report stale viewport sizes after sleep/wake;
+      // force a re-layout when the page is restored from bfcache.
+      window.addEventListener("pageshow", function (e) {
+        if (e.persisted) {
+          document.body.style.height = "auto";
+          requestAnimationFrame(function () {
+            document.body.style.height = "";
+          });
+        }
+      });
     </script>
   </body>
 </html>
