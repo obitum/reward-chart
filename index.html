@@ -17,7 +17,7 @@
         <div class="xp-fill" id="progressBar" style="width: 0%">
           <div class="xp-fill-inner" id="progressInner"></div>
         </div>
-        <span class="xp-text" id="progressText">0 / 101</span>
+        <span class="xp-text" id="progressText">0 / 60</span>
       </div>
 
       <div class="toolbar">
@@ -41,35 +41,60 @@
     </div>
 
     <script>
-      const totalBlocks = 101;
+      const totalBlocks = 60;
 
-      // Layered textures like Minecraft world (top to bottom)
-      // Row 1 (1-10): Grass, Rows 2-3 (11-30): Dirt, Rows 4-7 (31-70): Cobblestone, Rows 8-11 (71-101): Deepslate
+      // Layered textures: grass top row, two cobblestone rows, deepslate below.
       function getLayerTexture(blockNum) {
-        const row = Math.ceil(blockNum / 10);
-        if (row <= 1) return "assets/textures/blocks/grass_block_side.png";
-        if (row <= 3) return "assets/textures/blocks/coarse_dirt.png";
-        if (row <= 7) return "assets/textures/blocks/cobblestone.png";
+        if (blockNum <= 10) return "assets/textures/blocks/grass_block_side.png";
+        if (blockNum <= 30) return "assets/textures/blocks/cobblestone.png";
         return "assets/textures/blocks/deepslate.png";
       }
 
       const milestoneTextures = {
-        31: "assets/textures/blocks/coal_ore.png",
-        51: "assets/textures/blocks/iron_ore.png",
-        71: "assets/textures/blocks/deepslate_emerald_ore.png",
-        81: "assets/textures/blocks/deepslate_gold_ore.png",
-        91: "assets/textures/blocks/deepslate_redstone_ore.png",
-        101: "assets/textures/blocks/deepslate_diamond_ore.png",
+        11: "assets/textures/blocks/coal_ore.png",
+        21: "assets/textures/blocks/iron_ore.png",
+        31: "assets/textures/blocks/deepslate_emerald_ore.png",
+        41: "assets/textures/blocks/deepslate_gold_ore.png",
+        51: "assets/textures/blocks/deepslate_redstone_ore.png",
+        60: "assets/textures/blocks/deepslate_diamond_ore.png",
       };
 
       const milestoneItems = {
-        31: "assets/textures/items/coal.png",
-        51: "assets/textures/items/raw_iron.png",
-        71: "assets/textures/items/emerald.png",
-        81: "assets/textures/items/raw_gold.png",
-        91: "assets/textures/items/redstone.png",
-        101: "assets/textures/items/diamond.png",
+        11: "assets/textures/items/coal.png",
+        21: "assets/textures/items/raw_iron.png",
+        31: "assets/textures/items/emerald.png",
+        41: "assets/textures/items/raw_gold.png",
+        51: "assets/textures/items/redstone.png",
+        60: "assets/textures/items/diamond.png",
       };
+
+      // Migrate saved progress from older layouts (v1: 101 blocks, v2: 61 blocks) to v3 (60 blocks).
+      function migrateStoredData() {
+        const version = localStorage.getItem("minecraftRewardsVersion");
+        if (version === "v3") return;
+
+        let saved = JSON.parse(localStorage.getItem("minecraftRewards") || "[]");
+
+        if (version !== "v2") {
+          saved = saved
+            .map((n) => {
+              if (n >= 1 && n <= 10) return n;
+              if (n >= 31 && n <= 40) return n - 20;
+              if (n >= 51 && n <= 60) return n - 30;
+              if (n >= 71 && n <= 100) return n - 40;
+              if (n === 101) return 61;
+              return null;
+            })
+            .filter((n) => n !== null);
+        }
+
+        saved = Array.from(new Set(saved.map((n) => (n === 61 ? 60 : n))));
+
+        localStorage.setItem("minecraftRewards", JSON.stringify(saved));
+        localStorage.setItem("minecraftRewardsVersion", "v3");
+      }
+
+      migrateStoredData();
 
       function getBlockTexture(blockNum) {
         return milestoneTextures[blockNum] || getLayerTexture(blockNum);

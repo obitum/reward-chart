@@ -1,3 +1,13 @@
+:root {
+  /* Block size: limited by viewport width (10 columns) or height (6 grid rows + toolbar + chrome) */
+  --block-size: min(
+    calc((100vw - 40px) / 10),
+    calc((100svh - 70px) / 7)
+  );
+  /* Chart-grid total width: 10 blocks + 9 gaps + 2 paddings (all 2px each) */
+  --grid-width: calc(10 * var(--block-size) + 22px);
+}
+
 body {
   font-family: "Arial Black", Arial, sans-serif;
   background: url("textures/background.jpg") center / cover no-repeat fixed;
@@ -11,16 +21,10 @@ body {
 }
 
 .container {
-  background: transparent;
-  padding: 10px 20px 10px;
-  width: 100%;
-  max-width: min(900px, calc((100svh * 10 - 168px) / 12));
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  height: 100svh;
-  box-sizing: border-box;
-  margin: 0 auto;
+  align-items: center;
+  gap: 4px;
 }
 
 h1 {
@@ -40,20 +44,18 @@ h1 {
 
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(10, var(--block-size));
+  grid-auto-rows: var(--block-size);
   gap: 2px;
-  margin: 0;
-  position: relative;
+  padding: 2px;
   background: rgba(0, 0, 0, 0.65);
   border-radius: 4px;
-  padding: 2px;
-  min-height: 0;
-  flex: 1 1 auto;
+  position: relative;
 }
 
 .block {
-  aspect-ratio: 1;
   border: 2px solid #333;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -70,8 +72,6 @@ h1 {
   text-shadow:
     1px 1px 2px rgba(0, 0, 0, 0.8),
     -1px -1px 2px rgba(0, 0, 0, 0.5);
-  min-height: 0;
-  min-width: 0;
   overflow: hidden;
 }
 
@@ -164,14 +164,12 @@ h1 {
 }
 
 .xp-bar {
-  width: 100%;
-  height: 10px;
+  width: var(--grid-width);
+  height: 20px;
   background: url("textures/gui/experience_bar_background.png") left center / 50% 100% repeat-x;
   image-rendering: pixelated;
-  margin: 4px 0 0;
   position: relative;
   overflow: hidden;
-  flex: 0 0 auto;
 }
 
 .xp-fill {
@@ -207,12 +205,12 @@ h1 {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: 2px;
-  margin: 4px 0 20px;
+  width: var(--grid-width);
   background: #8b8b8b;
   border: 3px solid #333;
   border-radius: 3px;
   padding: 4px;
-  flex: 0 0 auto;
+  box-sizing: border-box;
 }
 
 .toolbar-slot {
